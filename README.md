@@ -96,6 +96,9 @@ Arguments:
   * `accessKey` **required** - Your S3 `AWSAccessKeyId`
   * `secretKey` **required** - Your S3 `AWSSecretKey`
   * `successActionStatus` - HTTP response status if successful, defaults to 201.
+  * `serverSideEncryption` - Server-side encryption parameters
+    * `encryptionType` - `AES256` for SSE-S3, `aws:kms` for SSE-KMS
+    * `kmsKeyId` - KMS key ID for SSE-KMS, format: `arn:aws:kms:region:acct-id:key/key-id`
   * `metadata` - Custom metadata to attach to your object
 
 Returns an object that behaves like a promise. It also has a `progress` method on it which accepts a callback and will invoke the callback with the upload progress.
@@ -108,6 +111,17 @@ RNS3.put(file, options)
   .catch(/* ... */)
   .progress((e) => console.log(e.loaded / e.total));
 ```
+
+## Server-Side Encryption
+
+Amazon S3 encrypts your data at the object level as it writes it to disks in its data centers and decrypts it for you when you access it. You have three options depending on how you choose to manage the encryption keys:
+  1. Use Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3)
+  2. Use Server-Side Encryption with AWS KMS-Managed Keys (SSE-KMS) 
+  3. Use Server-Side Encryption with Customer-Provided Keys (SSE-C)
+
+Currently, only Server-Side Encryption with SSE-S3 and SSE-KMS are supported in this library.
+
+View the [Amazon Simple Storage Service documentation: Protecting Data Using Server-Side Encryption](http://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html) for more documentation.
 
 ## TODO
 

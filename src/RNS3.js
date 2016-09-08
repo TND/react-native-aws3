@@ -40,6 +40,16 @@ export class RNS3 {
 
     let request = Request.create(url, method, policy);
 
+    if (options.serverSideEncryption) {
+      request.set("x-amz-server-side-encryption", options.serverSideEncryption.encryptionType);
+
+      if (options.serverSideEncryption.encryptionType === "aws:kms") {
+        if (options.serverSideEncryption.kmsKeyId) {
+          request.set("x-amz-server-side-encryption-aws-kms-key-id", options.serverSideEncryption.kmsKeyId);
+        }
+      }
+    }
+
     Object.keys(options.metadata).forEach((k) => request.set(k, options.metadata[k]));
 
     request.set('file', file);

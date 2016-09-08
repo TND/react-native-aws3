@@ -71,6 +71,7 @@ const getPolicyParams = (options) => {
     region: options.region,
     secretKey: options.secretKey,
     successActionStatus: '' + (options.successActionStatus || DEFAULT_SUCCESS_ACTION_STATUS),
+    serverSideEncryption: options.serverSideEncryption,
     metadata: options.metadata
   }
 }
@@ -102,6 +103,20 @@ const formatPolicyForEncoding = (policy) => {
        {"x-amz-algorithm": policy.algorithm},
        {"x-amz-date": policy.date.amzDate}
     ]
+  }
+
+  if (policy.serverSideEncryption) {
+    policyForEncoding.conditions.push({
+      "x-amz-server-side-encryption": policy.serverSideEncryption.encryptionType
+    });
+
+    if (policy.serverSideEncryption.encryptionType === "aws:kms") {
+      if (policy.serverSideEncryption.kmsKeyId) {
+        policyForEncoding.conditions.push({
+          "x-amz-server-side-encryption-aws-kms-key-id": policy.serverSideEncryption.kmsKeyId
+        });
+      }
+    }
   }
 
   Object.keys(policy.metadata).forEach((k) => {
